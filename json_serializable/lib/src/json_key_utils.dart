@@ -18,8 +18,7 @@ import 'utils.dart';
 final _jsonKeyExpando = Expando<Map<ClassConfig, KeyConfig>>();
 
 KeyConfig jsonKeyForField(FieldElement field, ClassConfig classAnnotation) =>
-    (_jsonKeyExpando[field] ??= Map.identity())[classAnnotation] ??=
-        _from(field, classAnnotation);
+    (_jsonKeyExpando[field] ??= Map.identity())[classAnnotation] ??= _from(field, classAnnotation);
 
 KeyConfig _from(FieldElement element, ClassConfig classAnnotation) {
   // If an annotation exists on `element` the source is a 'real' field.
@@ -145,10 +144,7 @@ KeyConfig _from(FieldElement element, ClassConfig classAnnotation) {
 
       final functionValue = objectValue.toFunctionValue()!;
 
-      final invokeConst =
-          functionValue is ConstructorElement && functionValue.isConst
-              ? 'const '
-              : '';
+      final invokeConst = functionValue is ConstructorElement && functionValue.isConst ? 'const ' : '';
 
       return '$invokeConst${functionValue.qualifiedName}()';
     }
@@ -172,6 +168,8 @@ KeyConfig _from(FieldElement element, ClassConfig classAnnotation) {
 
         if (_nullAsUnknownChecker.isExactlyType(annotationType)) {
           return jsonKeyNullForUndefinedEnumValueFieldName;
+        } else if (_skipAsUnknownChecker.isExactlyType(annotationType)) {
+          return jsonKeySkipForUndefinedEnumValueFieldName;
         } else if (!_interfaceTypesEqual(annotationType, targetEnumType)) {
           throwUnsupported(
             element,
@@ -191,11 +189,9 @@ KeyConfig _from(FieldElement element, ClassConfig classAnnotation) {
         );
       }
 
-      final enumValueNames =
-          enumFields.map((p) => p.name).toList(growable: false);
+      final enumValueNames = enumFields.map((p) => p.name).toList(growable: false);
 
-      final enumValueName =
-          enumValueForDartObject<String>(objectValue, enumValueNames, (n) => n);
+      final enumValueName = enumValueForDartObject<String>(objectValue, enumValueNames, (n) => n);
 
       return '${annotationType.element!.name}.$enumValueName';
     } else {
@@ -233,8 +229,7 @@ KeyConfig _from(FieldElement element, ClassConfig classAnnotation) {
   String? readValueFunctionName;
   final readValue = obj.read('readValue');
   if (!readValue.isNull) {
-    readValueFunctionName =
-        readValue.objectValue.toFunctionValue()!.qualifiedName;
+    readValueFunctionName = readValue.objectValue.toFunctionValue()!.qualifiedName;
   }
 
   final ignore = obj.read('ignore').literalValue as bool?;
@@ -269,8 +264,7 @@ KeyConfig _from(FieldElement element, ClassConfig classAnnotation) {
     name: obj.read('name').literalValue as String?,
     readValueFunctionName: readValueFunctionName,
     required: obj.read('required').literalValue as bool?,
-    unknownEnumValue:
-        createAnnotationValue('unknownEnumValue', mustBeEnum: true),
+    unknownEnumValue: createAnnotationValue('unknownEnumValue', mustBeEnum: true),
     includeToJson: includeToJson,
     includeFromJson: includeFromJson,
   );
@@ -301,8 +295,7 @@ KeyConfig _populateJsonKey(
   return KeyConfig(
     defaultValue: defaultValue,
     disallowNullValue: disallowNullValue ?? false,
-    includeIfNull: _includeIfNull(
-        includeIfNull, disallowNullValue, classAnnotation.includeIfNull),
+    includeIfNull: _includeIfNull(includeIfNull, disallowNullValue, classAnnotation.includeIfNull),
     name: name ?? encodedFieldName(classAnnotation.fieldRename, element.name),
     readValueFunctionName: readValueFunctionName,
     required: required ?? false,
@@ -332,8 +325,10 @@ bool _interfaceTypesEqual(DartType a, DartType b) {
   return a == b;
 }
 
-const jsonKeyNullForUndefinedEnumValueFieldName =
-    'JsonKey.nullForUndefinedEnumValue';
+const jsonKeyNullForUndefinedEnumValueFieldName = 'JsonKey.nullForUndefinedEnumValue';
 
-final _nullAsUnknownChecker =
-    TypeChecker.fromRuntime(JsonKey.nullForUndefinedEnumValue.runtimeType);
+final _nullAsUnknownChecker = TypeChecker.fromRuntime(JsonKey.nullForUndefinedEnumValue.runtimeType);
+
+const jsonKeySkipForUndefinedEnumValueFieldName = 'JsonKey.skipForUndefinedEnumValue';
+
+final _skipAsUnknownChecker = TypeChecker.fromRuntime(JsonKey.skipForUndefinedEnumValue.runtimeType);
