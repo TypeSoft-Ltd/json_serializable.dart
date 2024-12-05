@@ -176,6 +176,8 @@ class JsonKey {
   ///
   /// Read the documentation on [unknownEnumValue] for more details.
   static const Enum nullForUndefinedEnumValue = _NullAsDefault.value;
+  static const Enum skipForUndefinedEnumValue = _SkipAsDefault.value;
 }
 
 enum _NullAsDefault { value }
+enum _SkipAsDefault { value }

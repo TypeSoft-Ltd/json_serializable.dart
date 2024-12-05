@@ -7,10 +7,10 @@ repository: https://github.com/google/json_serializable.dart/tree/master/json_se
 environment:
   sdk: ^3.5.0
 topics:
- - json
- - build-runner
- - json-serializable
- - codegen
+  - json
+  - build-runner
+  - json-serializable
+  - codegen
 
 resolution: workspace
 
@@ -23,7 +23,11 @@ dependencies:
 
   # Use a tight version constraint to ensure that a constraint on
   # `json_annotation` properly constrains all features it provides.
-  json_annotation: '>=4.9.0 <4.10.0'
+  json_annotation:
+    git:
+      url: https://github.com/TypeSoft-Ltd/json_serializable.dart.git
+      ref: master
+      path: json_annotation
   meta: ^1.14.0
   path: ^1.9.0
   pub_semver: ^2.1.4

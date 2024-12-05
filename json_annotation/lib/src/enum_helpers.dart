@@ -29,7 +29,7 @@ K? $enumDecodeNullable<K extends Enum, V>(
     }
   }
 
-  if (unknownValue == JsonKey.nullForUndefinedEnumValue) {
+  if (unknownValue == JsonKey.nullForUndefinedEnumValue || unknownValue == JsonKey.skipForUndefinedEnumValue) {
     return null;
   }
 
