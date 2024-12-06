@@ -6,14 +6,14 @@ description: >-
   package:json_serializable and package:yaml.
 repository: https://github.com/google/json_serializable.dart/tree/master/checked_yaml
 topics:
- - yaml
- - json
- - build-runner
- - json-serializable
- - codegen
+  - yaml
+  - json
+  - build-runner
+  - json-serializable
+  - codegen
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.3.3
 
 resolution: workspace
 

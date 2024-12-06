@@ -36,8 +36,7 @@ class MapHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     final subFieldValue = context.serialize(valueType, closureArg);
     final subKeyValue =
-        _forType(keyType)?.serialize(keyType, _keyParam, false) ??
-            context.serialize(keyType, _keyParam);
+        _forType(keyType)?.serialize(keyType, _keyParam, false) ?? context.serialize(keyType, _keyParam);
 
     if (closureArg == subFieldValue && _keyParam == subKeyValue) {
       return expression;
@@ -68,8 +67,7 @@ class MapHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     _checkSafeKeyType(expression, keyArg);
 
-    final valueArgIsAny = valueArg is DynamicType ||
-        (valueArg.isDartCoreObject && valueArg.isNullableType);
+    final valueArgIsAny = valueArg is DynamicType || (valueArg.isDartCoreObject && valueArg.isNullableType);
     final isKeyStringable = _isKeyStringable(keyArg);
 
     final targetTypeIsNullable = defaultProvided || targetType.isNullableType;
@@ -94,7 +92,7 @@ class MapHelper extends TypeHelper<TypeHelperContextWithConfig> {
               // `toDouble` on input values
               valueArg.isSimpleJsonTypeNotDouble)) {
         // No mapping of the values or null check required!
-        final valueString = valueArg.getDisplayString();
+        final valueString = valueArg.getDisplayString(withNullability: true);
         return 'Map<String, $valueString>.from($expression as Map)';
       }
     }
@@ -113,12 +111,9 @@ class MapHelper extends TypeHelper<TypeHelperContextWithConfig> {
     String keyUsage;
     if (keyArg.isEnum) {
       keyUsage = context.deserialize(keyArg, _keyParam).toString();
-    } else if (context.config.anyMap &&
-        !(keyArg.isDartCoreObject || keyArg is DynamicType)) {
+    } else if (context.config.anyMap && !(keyArg.isDartCoreObject || keyArg is DynamicType)) {
       keyUsage = '$_keyParam as String';
-    } else if (context.config.anyMap &&
-        keyArg.isDartCoreObject &&
-        !keyArg.isNullableType) {
+    } else if (context.config.anyMap && keyArg.isDartCoreObject && !keyArg.isNullableType) {
       keyUsage = '$_keyParam as Object';
     } else {
       keyUsage = _keyParam;
@@ -126,8 +121,7 @@ class MapHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     final toFromString = _forType(keyArg);
     if (toFromString != null) {
-      keyUsage =
-          toFromString.deserialize(keyArg, keyUsage, false, true).toString();
+      keyUsage = toFromString.deserialize(keyArg, keyUsage, false, true).toString();
     }
 
     return '($expression $mapCast)$optionalQuestion.map( '
@@ -146,22 +140,18 @@ final _instances = [
   uriString,
 ];
 
-ToFromStringHelper? _forType(DartType type) =>
-    _instances.singleWhereOrNull((i) => i.matches(type));
+ToFromStringHelper? _forType(DartType type) => _instances.singleWhereOrNull((i) => i.matches(type));
 
 /// Returns `true` if [keyType] can be automatically converted to/from String –
 /// and is therefor usable as a key in a [Map].
-bool _isKeyStringable(DartType keyType) =>
-    keyType.isEnum || _instances.any((inst) => inst.matches(keyType));
+bool _isKeyStringable(DartType keyType) => keyType.isEnum || _instances.any((inst) => inst.matches(keyType));
 
 void _checkSafeKeyType(String expression, DartType keyArg) {
   // We're not going to handle converting key types at the moment
   // So the only safe types for key are dynamic/Object/String/enum
   if (keyArg is DynamicType ||
       (!keyArg.isNullableType &&
-          (keyArg.isDartCoreObject ||
-              coreStringTypeChecker.isExactlyType(keyArg) ||
-              _isKeyStringable(keyArg)))) {
+          (keyArg.isDartCoreObject || coreStringTypeChecker.isExactlyType(keyArg) || _isKeyStringable(keyArg)))) {
     return;
   }
 
@@ -176,15 +166,9 @@ void _checkSafeKeyType(String expression, DartType keyArg) {
 ///
 /// Used in [_checkSafeKeyType] to provide a helpful error with unsupported
 /// types.
-List<String> get allowedMapKeyTypes => [
-      'Object',
-      'dynamic',
-      'enum',
-      'String',
-      ..._instances.map((i) => i.coreTypeName)
-    ];
+List<String> get allowedMapKeyTypes =>
+    ['Object', 'dynamic', 'enum', 'String', ..._instances.map((i) => i.coreTypeName)];
 
 extension on DartType {
-  bool get isSimpleJsonTypeNotDouble =>
-      !isDartCoreDouble && simpleJsonTypeChecker.isAssignableFromType(this);
+  bool get isSimpleJsonTypeNotDouble => !isDartCoreDouble && simpleJsonTypeChecker.isAssignableFromType(this);
 }

@@ -20,31 +20,25 @@ const _jsonKeyChecker = TypeChecker.fromRuntime(JsonKey);
 
 DartObject? _jsonKeyAnnotation(FieldElement element) =>
     _jsonKeyChecker.firstAnnotationOf(element) ??
-    (element.getter == null
-        ? null
-        : _jsonKeyChecker.firstAnnotationOf(element.getter!));
+    (element.getter == null ? null : _jsonKeyChecker.firstAnnotationOf(element.getter!));
 
-ConstantReader jsonKeyAnnotation(FieldElement element) =>
-    ConstantReader(_jsonKeyAnnotation(element));
+ConstantReader jsonKeyAnnotation(FieldElement element) => ConstantReader(_jsonKeyAnnotation(element));
 
 /// Returns `true` if [element] is annotated with [JsonKey].
-bool hasJsonKeyAnnotation(FieldElement element) =>
-    _jsonKeyAnnotation(element) != null;
+bool hasJsonKeyAnnotation(FieldElement element) => _jsonKeyAnnotation(element) != null;
 
-Never throwUnsupported(FieldElement element, String message) =>
-    throw InvalidGenerationSourceError(
+Never throwUnsupported(FieldElement element, String message) => throw InvalidGenerationSourceError(
       'Error with `@JsonKey` on the `${element.name}` field. $message',
       element: element,
     );
 
-T? readEnum<T extends Enum>(ConstantReader reader, List<T> values) =>
-    reader.isNull
-        ? null
-        : enumValueForDartObject<T>(
-            reader.objectValue,
-            values,
-            (f) => f.name,
-          );
+T? readEnum<T extends Enum>(ConstantReader reader, List<T> values) => reader.isNull
+    ? null
+    : enumValueForDartObject<T>(
+        reader.objectValue,
+        values,
+        (f) => f.name,
+      );
 
 T enumValueForDartObject<T>(
   DartObject source,
@@ -64,14 +58,11 @@ JsonSerializable _valueForAnnotation(ConstantReader reader) => JsonSerializable(
       createToJson: reader.read('createToJson').literalValue as bool?,
       createFieldMap: reader.read('createFieldMap').literalValue as bool?,
       createJsonKeys: reader.read('createJsonKeys').literalValue as bool?,
-      createPerFieldToJson:
-          reader.read('createPerFieldToJson').literalValue as bool?,
-      disallowUnrecognizedKeys:
-          reader.read('disallowUnrecognizedKeys').literalValue as bool?,
+      createPerFieldToJson: reader.read('createPerFieldToJson').literalValue as bool?,
+      disallowUnrecognizedKeys: reader.read('disallowUnrecognizedKeys').literalValue as bool?,
       explicitToJson: reader.read('explicitToJson').literalValue as bool?,
       fieldRename: readEnum(reader.read('fieldRename'), FieldRename.values),
-      genericArgumentFactories:
-          reader.read('genericArgumentFactories').literalValue as bool?,
+      genericArgumentFactories: reader.read('genericArgumentFactories').literalValue as bool?,
       ignoreUnannotated: reader.read('ignoreUnannotated').literalValue as bool?,
       includeIfNull: reader.read('includeIfNull').literalValue as bool?,
     );
@@ -94,8 +85,7 @@ ClassConfig mergeConfig(
   assert(config.ctorParamDefaults.isEmpty);
 
   final constructor = annotation.constructor ?? config.constructor;
-  final constructorInstance =
-      _constructorByNameOrNull(classElement, constructor);
+  final constructorInstance = _constructorByNameOrNull(classElement, constructor);
 
   final paramDefaultValueMap = constructorInstance == null
       ? <String, String>{}
@@ -113,15 +103,12 @@ ClassConfig mergeConfig(
     createToJson: annotation.createToJson ?? config.createToJson,
     createFieldMap: annotation.createFieldMap ?? config.createFieldMap,
     createJsonKeys: annotation.createJsonKeys ?? config.createJsonKeys,
-    createPerFieldToJson:
-        annotation.createPerFieldToJson ?? config.createPerFieldToJson,
-    disallowUnrecognizedKeys:
-        annotation.disallowUnrecognizedKeys ?? config.disallowUnrecognizedKeys,
+    createPerFieldToJson: annotation.createPerFieldToJson ?? config.createPerFieldToJson,
+    disallowUnrecognizedKeys: annotation.disallowUnrecognizedKeys ?? config.disallowUnrecognizedKeys,
     explicitToJson: annotation.explicitToJson ?? config.explicitToJson,
     fieldRename: annotation.fieldRename ?? config.fieldRename,
     genericArgumentFactories: annotation.genericArgumentFactories ??
-        (classElement.typeParameters.isNotEmpty &&
-            config.genericArgumentFactories),
+        (classElement.typeParameters.isNotEmpty && config.genericArgumentFactories),
     ignoreUnannotated: annotation.ignoreUnannotated ?? config.ignoreUnannotated,
     includeIfNull: annotation.includeIfNull ?? config.includeIfNull,
     ctorParamDefaults: paramDefaultValueMap,
@@ -179,18 +166,16 @@ Iterable<FieldElement>? iterateEnumFields(DartType targetType) {
 }
 
 extension DartTypeExtension on DartType {
-  DartType promoteNonNullable() =>
-      element?.library?.typeSystem.promoteToNonNull(this) ?? this;
+  DartType promoteNonNullable() => element?.library?.typeSystem.promoteToNonNull(this) ?? this;
 
   String toStringNonNullable() {
-    final val = getDisplayString();
+    final val = getDisplayString(withNullability: false);
     if (val.endsWith('?')) return val.substring(0, val.length - 1);
     return val;
   }
 }
 
-String ifNullOrElse(String test, String ifNull, String ifNotNull) =>
-    '$test == null ? $ifNull : $ifNotNull';
+String ifNullOrElse(String test, String ifNull, String ifNotNull) => '$test == null ? $ifNull : $ifNotNull';
 
 String encodedFieldName(
   FieldRename fieldRename,
@@ -219,8 +204,7 @@ String typeToCode(
   } else if (type is InterfaceType) {
     return [
       type.element.name,
-      if (type.typeArguments.isNotEmpty)
-        '<${type.typeArguments.map(typeToCode).join(', ')}>',
+      if (type.typeArguments.isNotEmpty) '<${type.typeArguments.map(typeToCode).join(', ')}>',
       (type.isNullableType || forceNullable) ? '?' : '',
     ].join();
   }

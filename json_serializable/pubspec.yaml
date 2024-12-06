@@ -5,7 +5,7 @@ description: >-
   Dart classes.
 repository: https://github.com/google/json_serializable.dart/tree/master/json_serializable
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.3.3
 topics:
   - json
   - build-runner
@@ -15,7 +15,7 @@ topics:
 resolution: workspace
 
 dependencies:
-  analyzer: ^6.5.0
+  analyzer: ^6.4.0
   async: ^2.10.0
   build: ^2.4.1
   build_config: ^1.1.0
@@ -24,11 +24,12 @@ dependencies:
   # Use a tight version constraint to ensure that a constraint on
   # `json_annotation` properly constrains all features it provides.
   json_annotation:
-    git:
-      url: https://github.com/TypeSoft-Ltd/json_serializable.dart.git
-      ref: master
-      path: json_annotation
-  meta: ^1.14.0
+    #    git:
+    #      url: https://github.com/TypeSoft-Ltd/json_serializable.dart.git
+    #      ref: master
+    #      path: json_annotation
+    path: ../json_annotation
+  meta: ^1.11.0
   path: ^1.9.0
   pub_semver: ^2.1.4
   pubspec_parse: ^1.0.0
@@ -47,3 +48,7 @@ dev_dependencies:
   test_descriptor: ^2.0.0
   test_process: ^2.0.0
   yaml: ^3.0.0
+
+dependency_overrides:
+  json_annotation:
+    path: ../json_annotation

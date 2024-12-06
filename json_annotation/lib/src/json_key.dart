@@ -147,6 +147,9 @@ class JsonKey {
   ///
   /// To use `null` for unknown values, use [JsonKey.nullForUndefinedEnumValue].
   /// This is only valid for nullable enum fields.
+  ///
+  /// To skip unknown values, use [JsonKey.skipForUndefinedEnumValue].
+  /// This will remove all `null` values, essentially making the enum non-nullable.
   final Enum? unknownEnumValue;
 
   /// Creates a new [JsonKey] instance.
@@ -176,8 +179,13 @@ class JsonKey {
   ///
   /// Read the documentation on [unknownEnumValue] for more details.
   static const Enum nullForUndefinedEnumValue = _NullAsDefault.value;
+
+  /// Sentinel value for use with [unknownEnumValue].
+  ///
+  /// Read the documentation on [unknownEnumValue] for more details.
   static const Enum skipForUndefinedEnumValue = _SkipAsDefault.value;
 }
 
 enum _NullAsDefault { value }
+
 enum _SkipAsDefault { value }

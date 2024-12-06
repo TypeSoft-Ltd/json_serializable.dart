@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:analyzer/dart/element/type.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:source_gen/source_gen.dart' show TypeChecker;
 import 'package:source_helper/source_helper.dart';
 
@@ -104,10 +103,9 @@ class IterableHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     if (_coreListChecker.isExactlyType(targetType)) {
       final jsonKey = jsonKeyForField(context.fieldElement, context.config);
-      final shouldRemoveNulls =
-          targetType.isDartCoreEnum && jsonKey.unknownEnumValue == JsonKey.skipForUndefinedEnumValue.name;
+      final shouldRemoveNulls = jsonKey.unknownEnumValue == jsonKeyNullForUndefinedEnumValueFieldName;
 
-      output += shouldRemoveNulls ? '$optionalQuestion.nonNulls.toList()' : '$optionalQuestion.toList()';
+      output += '$optionalQuestion${shouldRemoveNulls ? '.nonNulls' : ''}.toList()';
     } else if (_coreSetChecker.isExactlyType(targetType)) {
       output += '$optionalQuestion.toSet()';
     }

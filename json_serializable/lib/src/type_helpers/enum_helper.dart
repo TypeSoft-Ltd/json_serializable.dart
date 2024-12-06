@@ -29,8 +29,7 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     context.addMember(memberContent);
 
-    if (targetType.isNullableType ||
-        enumFieldWithNullInEncodeMap(targetType) == true) {
+    if (targetType.isNullableType || enumFieldWithNullInEncodeMap(targetType) == true) {
       return '${constMapName(targetType)}[$expression]';
     } else {
       return '${constMapName(targetType)}[$expression]!';
@@ -52,8 +51,7 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     final jsonKey = jsonKeyForField(context.fieldElement, context.config);
 
-    if (!targetType.isNullableType &&
-        jsonKey.unknownEnumValue == jsonKeyNullForUndefinedEnumValueFieldName) {
+    if (!targetType.isNullableType && jsonKey.unknownEnumValue == jsonKeyNullForUndefinedEnumValueFieldName) {
       // If the target is not nullable,
       throw InvalidGenerationSourceError(
         '`$jsonKeyNullForUndefinedEnumValueFieldName` cannot be used with '
@@ -65,6 +63,8 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
     String functionName;
     if (targetType.isNullableType || defaultProvided) {
       functionName = r'$enumDecodeNullable';
+    } else if (jsonKey.unknownEnumValue == r'JsonKey.skipForUndefinedEnumValue') {
+      functionName = r'$enumDecodeNullable';
     } else {
       functionName = r'$enumDecode';
     }
@@ -74,8 +74,7 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
     final args = [
       constMapName(targetType),
       expression,
-      if (jsonKey.unknownEnumValue != null)
-        'unknownValue: ${jsonKey.unknownEnumValue}',
+      if (jsonKey.unknownEnumValue != null) 'unknownValue: ${jsonKey.unknownEnumValue}',
     ];
 
     return '$functionName(${args.join(', ')})';

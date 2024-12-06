@@ -51,20 +51,15 @@ mixin DecodeHelper implements HelperCore {
 
     final fromJsonLines = <String>[];
 
-    String deserializeFun(String paramOrFieldName,
-            {ParameterElement? ctorParam}) =>
-        _deserializeForField(accessibleFields[paramOrFieldName]!,
-            ctorParam: ctorParam);
+    String deserializeFun(String paramOrFieldName, {ParameterElement? ctorParam}) =>
+        _deserializeForField(accessibleFields[paramOrFieldName]!, ctorParam: ctorParam);
 
     final data = _writeConstructorInvocation(
       element,
       config.constructor,
       accessibleFields.keys,
       accessibleFields.values
-          .where((fe) =>
-              element.augmented
-                  .lookUpSetter(name: fe.name, library: element.library) !=
-              null)
+          .where((fe) => element.lookUpSetter(fe.name, element.library) != null)
           .map((fe) => fe.name)
           .toList(),
       unavailableReasons,
@@ -72,8 +67,7 @@ mixin DecodeHelper implements HelperCore {
     );
 
     final checks = _checkKeys(
-      accessibleFields.values
-          .where((fe) => data.usedCtorParamsAndFields.contains(fe.name)),
+      accessibleFields.values.where((fe) => data.usedCtorParamsAndFields.contains(fe.name)),
     ).toList();
 
     if (config.checked) {
@@ -162,8 +156,7 @@ mixin DecodeHelper implements HelperCore {
   Iterable<String> _checkKeys(Iterable<FieldElement> accessibleFields) sync* {
     final args = <String>[];
 
-    String constantList(Iterable<FieldElement> things) =>
-        'const ${jsonLiteralAsDart(things.map(nameAccess).toList())}';
+    String constantList(Iterable<FieldElement> things) => 'const ${jsonLiteralAsDart(things.map(nameAccess).toList())}';
 
     if (config.disallowUnrecognizedKeys) {
       final allowKeysLiteral = constantList(accessibleFields);
@@ -171,17 +164,14 @@ mixin DecodeHelper implements HelperCore {
       args.add('allowedKeys: $allowKeysLiteral');
     }
 
-    final requiredKeys =
-        accessibleFields.where((fe) => jsonKeyFor(fe).required).toList();
+    final requiredKeys = accessibleFields.where((fe) => jsonKeyFor(fe).required).toList();
     if (requiredKeys.isNotEmpty) {
       final requiredKeyLiteral = constantList(requiredKeys);
 
       args.add('requiredKeys: $requiredKeyLiteral');
     }
 
-    final disallowNullKeys = accessibleFields
-        .where((fe) => jsonKeyFor(fe).disallowNullValue)
-        .toList();
+    final disallowNullKeys = accessibleFields.where((fe) => jsonKeyFor(fe).disallowNullValue).toList();
     if (disallowNullKeys.isNotEmpty) {
       final disallowNullKeyLiteral = constantList(disallowNullKeys);
 
@@ -220,8 +210,7 @@ mixin DecodeHelper implements HelperCore {
       if (config.checked) {
         value = deserialize('v');
         if (!checkedProperty) {
-          final readValueBit =
-              readValueFunc == null ? '' : ',readValue: $readValueFunc,';
+          final readValueBit = readValueFunc == null ? '' : ',readValue: $readValueFunc,';
           value = '\$checkedConvert($jsonKeyName, (v) => $value$readValueBit)';
         }
       } else {
@@ -231,9 +220,7 @@ mixin DecodeHelper implements HelperCore {
         );
 
         value = deserialize(
-          readValueFunc == null
-              ? 'json[$jsonKeyName]'
-              : '$readValueFunc(json, $jsonKeyName)',
+          readValueFunc == null ? 'json[$jsonKeyName]' : '$readValueFunc(json, $jsonKeyName)',
         );
       }
     } on UnsupportedTypeError catch (e) // ignore: avoid_catching_errors
@@ -268,8 +255,7 @@ _ConstructorData _writeConstructorInvocation(
   Iterable<String> availableConstructorParameters,
   Iterable<String> writableFields,
   Map<String, String> unavailableReasons,
-  String Function(String paramOrFieldName, {ParameterElement ctorParam})
-      deserializeForField,
+  String Function(String paramOrFieldName, {ParameterElement ctorParam}) deserializeForField,
 ) {
   final className = classElement.name;
 
@@ -307,8 +293,7 @@ _ConstructorData _writeConstructorInvocation(
   }
 
   // fields that aren't already set by the constructor and that aren't final
-  final remainingFieldsForInvocationBody =
-      writableFields.toSet().difference(usedCtorParamsAndFields);
+  final remainingFieldsForInvocationBody = writableFields.toSet().difference(usedCtorParamsAndFields);
 
   final constructorExtra = constructorName.isEmpty ? '' : '.$constructorName';
 
@@ -322,8 +307,7 @@ _ConstructorData _writeConstructorInvocation(
     buffer
       ..writeln()
       ..writeAll(constructorArguments.map((paramElement) {
-        final content =
-            deserializeForField(paramElement.name, ctorParam: paramElement);
+        final content = deserializeForField(paramElement.name, ctorParam: paramElement);
         return '      $content,\n';
       }));
   }
@@ -331,8 +315,7 @@ _ConstructorData _writeConstructorInvocation(
     buffer
       ..writeln()
       ..writeAll(namedConstructorArguments.map((paramElement) {
-        final value =
-            deserializeForField(paramElement.name, ctorParam: paramElement);
+        final value = deserializeForField(paramElement.name, ctorParam: paramElement);
         return '      ${paramElement.name}: $value,\n';
       }));
   }
