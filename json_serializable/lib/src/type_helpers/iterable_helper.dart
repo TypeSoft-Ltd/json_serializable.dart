@@ -103,7 +103,7 @@ class IterableHelper extends TypeHelper<TypeHelperContextWithConfig> {
 
     if (_coreListChecker.isExactlyType(targetType)) {
       final jsonKey = jsonKeyForField(context.fieldElement, context.config);
-      final shouldRemoveNulls = jsonKey.unknownEnumValue == jsonKeyNullForUndefinedEnumValueFieldName;
+      final shouldRemoveNulls = jsonKey.unknownEnumValue == jsonKeySkipForUndefinedEnumValueFieldName;
 
       output += '$optionalQuestion${shouldRemoveNulls ? '.nonNulls' : ''}.toList()';
     } else if (_coreSetChecker.isExactlyType(targetType)) {

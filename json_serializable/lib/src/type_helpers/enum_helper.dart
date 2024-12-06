@@ -61,9 +61,9 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
     }
 
     String functionName;
-    if (targetType.isNullableType || defaultProvided) {
-      functionName = r'$enumDecodeNullable';
-    } else if (jsonKey.unknownEnumValue == r'JsonKey.skipForUndefinedEnumValue') {
+    if (targetType.isNullableType ||
+        defaultProvided ||
+        jsonKey.unknownEnumValue == jsonKeySkipForUndefinedEnumValueFieldName) {
       functionName = r'$enumDecodeNullable';
     } else {
       functionName = r'$enumDecode';
